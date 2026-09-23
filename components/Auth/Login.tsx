@@ -17,9 +17,10 @@ import { loginUser } from "@/app/services/auth/login";
 type loginInputs = {
   email: string;
   password: string;
+  redirect?: string;
 };
 
-const Login = () => {
+const Login = ({ redirect }: { redirect?: string | undefined }) => {
   const {
     register,
     handleSubmit,
@@ -27,11 +28,11 @@ const Login = () => {
   } = useForm<loginInputs>();
 
   const onSubmit: SubmitHandler<loginInputs> = (data) => {
-    console.log(data);
-    console.log({
-      email: data?.email,
-      password: data?.password,
-    });
+    // console.log(data);
+    // console.log({
+    //   email: data?.email,
+    //   password: data?.password,
+    // });
 
     loginUser(data);
   };
@@ -44,6 +45,9 @@ const Login = () => {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <FieldGroup>
+            {redirect && (
+              <input type="hidden" name="redirect" value={redirect} />
+            )}
             {/* email  */}
             <Field data-invalid={!!errors.email}>
               <FieldLabel htmlFor="email">Email</FieldLabel>
