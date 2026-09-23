@@ -30,13 +30,13 @@ const Register = () => {
   } = useForm<registerInputs>();
 
   const onSubmit: SubmitHandler<registerInputs> = (data) => {
-    console.log(data);
-    console.log({
-      name: data?.name,
-      email: data?.email,
-      password: data?.password,
-      confirmPassword: data?.confirmPassword,
-    });
+    // console.log(data);
+    // console.log({
+    //   name: data?.name,
+    //   email: data?.email,
+    //   password: data?.password,
+    //   confirmPassword: data?.confirmPassword,
+    // });
 
     registerUser(data);
   };
