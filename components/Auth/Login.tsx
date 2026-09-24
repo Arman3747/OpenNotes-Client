@@ -17,24 +17,36 @@ import { loginUser } from "@/app/services/auth/login";
 type loginInputs = {
   email: string;
   password: string;
-  redirect?: string;
+  // redirect?: string;
 };
 
 const Login = ({ redirect }: { redirect?: string | undefined }) => {
   const {
     register,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
-  } = useForm<loginInputs>();
+  } = useForm<loginInputs>({
+    criteriaMode: "all",
+  });
 
-  const onSubmit: SubmitHandler<loginInputs> = (data) => {
-    // console.log(data);
-    // console.log({
-    //   email: data?.email,
-    //   password: data?.password,
-    // });
+  const onSubmit: SubmitHandler<loginInputs> = async (data) => {
+    clearErrors("root");
 
-    loginUser(data);
+    const result = await loginUser({ ...data, redirect });
+
+    if (result?.success === false) {
+      const message =
+        "errors" in result && result.errors
+          ? result.errors.map((error) => error.message).join(" ")
+          : result.message || "Login failed. Please try again.";
+
+      setError("root.server", {
+        type: "server",
+        message,
+      });
+    }
   };
 
   return (
@@ -45,9 +57,9 @@ const Login = ({ redirect }: { redirect?: string | undefined }) => {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <FieldGroup>
-            {redirect && (
+            {/* {redirect && (
               <input type="hidden" name="redirect" value={redirect} />
-            )}
+            )} */}
             {/* email  */}
             <Field data-invalid={!!errors.email}>
               <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -75,7 +87,7 @@ const Login = ({ redirect }: { redirect?: string | undefined }) => {
               <Input
                 id="password"
                 type="password"
-                autoComplete="new-password"
+                autoComplete="current-password"
                 aria-invalid={!!errors.password}
                 {...register("password", {
                   required: "Password is required",
@@ -83,32 +95,60 @@ const Login = ({ redirect }: { redirect?: string | undefined }) => {
                     value: 6,
                     message: "Password must be at least 6 characters",
                   },
-                  pattern: {
-                    value: /^(?=.*[a-z])(?=.*[A-Z]).+$/,
-                    message:
-                      "Must include at least one uppercase and one lowercase letter",
+                  validate: {
+                    uppercase: (value) =>
+                      /[A-Z]/.test(value) ||
+                      "Add at least one uppercase letter",
+                    lowercase: (value) =>
+                      /[a-z]/.test(value) ||
+                      "Add at least one lowercase letter",
+                    number: (value) =>
+                      /[0-9]/.test(value) || "Add at least one number",
+                    special: (value) =>
+                      /[^A-Za-z0-9\s]/.test(value) ||
+                      "Add at least one special character",
                   },
                 })}
                 required
               />
               <FieldDescription>
-                Must be at least 8 characters long.
+                Use 6+ characters, including uppercase, lowercase, a number, and
+                a symbol.
               </FieldDescription>
-              {errors.password && (
-                <FieldError>{errors.password.message}</FieldError>
-              )}
+              {errors.password?.types
+                ? Object.entries(errors.password.types).map(
+                    ([rule, message]) =>
+                      typeof message === "string" ? (
+                        <FieldError key={rule}>{message}</FieldError>
+                      ) : null,
+                  )
+                : errors.password?.message && (
+                    <FieldError>{errors.password.message}</FieldError>
+                  )}
             </Field>
 
             <Field>
+              {errors.root?.server?.message && (
+                <FieldError>{errors.root.server.message}</FieldError>
+              )}
+
               <Button type="submit" disabled={isSubmitting}>
-                Login
+                {isSubmitting ? "Logging in..." : "Login"}
               </Button>
               {/* <Button variant="outline" type="button">
                   Sign up with Google
                 </Button> */}
               <FieldDescription className="px-6 text-center">
                 Do not have an account?{" "}
-                <Link href="/register" prefetch={true}>
+                {/* <Link href="/register" prefetch={true}>
+                  Register
+                </Link> */}
+                <Link
+                  href={{
+                    pathname: "/register",
+                    query: redirect ? { redirect } : {},
+                  }}
+                >
                   Register
                 </Link>
               </FieldDescription>

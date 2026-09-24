@@ -10,7 +10,7 @@ const BlogDetailsPage = async ({
 
   const singleBlog = await getBlogById(blogId);
   const blog = singleBlog?.data;
-  console.log(blog);
+  // console.log(blog);
 
   return (
     <main className="min-h-screen">

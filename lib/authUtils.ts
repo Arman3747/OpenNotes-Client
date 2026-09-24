@@ -21,17 +21,20 @@ export const commonProtectedRoutes: RouteConfig = {
 };
 
 export const superAdminProtectedRoutes: RouteConfig = {
-  patterns: [/^\/superAdmin/],
+  // patterns: [/^\/superAdmin/],
+  patterns: [/^\/superAdmin(?:\/|$)/],
   exact: [],
 };
 
 export const adminProtectedRoutes: RouteConfig = {
-  patterns: [/^\/admin/],
+  // patterns: [/^\/admin/],
+  patterns: [/^\/admin(?:\/|$)/],
   exact: [],
 };
 
 export const userProtectedRoutes: RouteConfig = {
-  patterns: [/^\/dashboard/],
+  // patterns: [/^\/dashboard/],
+  patterns: [/^\/dashboard(?:\/|$)/],
   exact: [],
 };
 
@@ -75,7 +78,7 @@ export const getDefaultDashboardRoute = (role: UserRole): string => {
     return "/superAdmin/dashboard";
   }
   if (role === "USER") {
-    return "dashboard";
+    return "/dashboard";
   }
   return "/";
 };
@@ -93,3 +96,29 @@ export const isValidRedirectForRole = (
   }
   return false;
 };
+
+/**
+ * NEED TO CHANGE => DONT UNDERSTAND : 
+ * 
+ * Before using a user supplied redirect, ensure it is a local path. Your current getRouteOwner() returns null for an external URL, which makes isValidRedirectForRole() return true:
+ * 
+ * export const isValidRedirectForRole = (
+  redirectPath: string,
+  role: UserRole
+): boolean => {
+  if (
+    !redirectPath.startsWith("/") ||
+    redirectPath.startsWith("//") ||
+    redirectPath.includes("\\")
+  ) {
+    return false;
+  }
+
+  const pathname = new URL(redirectPath, "http://localhost").pathname;
+  const routeOwner = getRouteOwner(pathname);
+
+  return routeOwner === null ||
+    routeOwner === "COMMON" ||
+    routeOwner === role;
+};
+*/

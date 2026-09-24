@@ -21,24 +21,46 @@ type registerInputs = {
   confirmPassword: string;
 };
 
-const Register = () => {
+const Register = ({ redirect }: { redirect?: string | undefined }) => {
   const {
     register,
     handleSubmit,
     getValues,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
-  } = useForm<registerInputs>();
+  } = useForm<registerInputs>({
+    criteriaMode: "all",
+  });
 
-  const onSubmit: SubmitHandler<registerInputs> = (data) => {
-    // console.log(data);
-    // console.log({
-    //   name: data?.name,
-    //   email: data?.email,
-    //   password: data?.password,
-    //   confirmPassword: data?.confirmPassword,
-    // });
+  // const onSubmit: SubmitHandler<registerInputs> = (data) => {
+  //   // console.log(data);
+  //   // console.log({
+  //   //   name: data?.name,
+  //   //   email: data?.email,
+  //   //   password: data?.password,
+  //   //   confirmPassword: data?.confirmPassword,
+  //   // });
 
-    registerUser(data);
+  //   registerUser(data);
+  // };
+
+  const onSubmit: SubmitHandler<registerInputs> = async (data) => {
+    clearErrors("root");
+
+    const result = await registerUser({ ...data, redirect });
+
+    if (result?.success === false) {
+      const message =
+        "errors" in result && result.errors
+          ? result.errors.map((error) => error.message).join(" ")
+          : "Registration could not be completed.";
+
+      setError("root.server", {
+        type: "server",
+        message,
+      });
+    }
   };
 
   return (
@@ -108,20 +130,36 @@ const Register = () => {
                     value: 6,
                     message: "Password must be at least 6 characters",
                   },
-                  pattern: {
-                    value: /^(?=.*[a-z])(?=.*[A-Z]).+$/,
-                    message:
-                      "Must include at least one uppercase and one lowercase letter",
+                  validate: {
+                    uppercase: (value) =>
+                      /[A-Z]/.test(value) ||
+                      "Add at least one uppercase letter",
+                    lowercase: (value) =>
+                      /[a-z]/.test(value) ||
+                      "Add at least one lowercase letter",
+                    number: (value) =>
+                      /[0-9]/.test(value) || "Add at least one number",
+                    special: (value) =>
+                      /[^A-Za-z0-9\s]/.test(value) ||
+                      "Add at least one special character",
                   },
                 })}
                 required
               />
               <FieldDescription>
-                Must be at least 8 characters long.
+                Use 6+ characters, including uppercase, lowercase, a number, and
+                a symbol.
               </FieldDescription>
-              {errors.password && (
-                <FieldError>{errors.password.message}</FieldError>
-              )}
+              {errors.password?.types
+                ? Object.entries(errors.password.types).map(
+                    ([rule, message]) =>
+                      typeof message === "string" ? (
+                        <FieldError key={rule}>{message}</FieldError>
+                      ) : null,
+                  )
+                : errors.password?.message && (
+                    <FieldError>{errors.password.message}</FieldError>
+                  )}
             </Field>
 
             {/* Confirm Password  */}
@@ -147,15 +185,25 @@ const Register = () => {
             </Field>
 
             <Field>
+              {errors.root?.server?.message && (
+                <FieldError>{errors.root.server.message}</FieldError>
+              )}
+
               <Button type="submit" disabled={isSubmitting}>
-                Create Account
+                {isSubmitting ? "Creating account..." : "Create Account"}
               </Button>
+
               {/* <Button variant="outline" type="button">
                   Sign up with Google
                 </Button> */}
               <FieldDescription className="px-6 text-center">
                 Already have an account?
-                <Link href="/login" prefetch={true}>
+                <Link
+                  href={{
+                    pathname: "/login",
+                    query: redirect ? { redirect } : {},
+                  }}
+                >
                   Login
                 </Link>
               </FieldDescription>
