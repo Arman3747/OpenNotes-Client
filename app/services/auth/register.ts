@@ -1,6 +1,5 @@
 "use server";
 
-// import { redirect } from "next/navigation";
 import z from "zod";
 import { loginUser } from "./login";
 
@@ -49,9 +48,6 @@ const registerValidationZodSchema = z
   });
 
 export const registerUser = async (data: registerInputs) => {
-  // // pore
-  // const redirect = data?.redirect || null;
-
   const validatedFields = registerValidationZodSchema.safeParse(data);
 
   if (!validatedFields.success) {
@@ -91,17 +87,6 @@ export const registerUser = async (data: registerInputs) => {
       };
     }
 
-    // else {
-    //   const data = { email, password, redirect };
-
-    //   const resultLogin = await loginUser(data);
-
-    //   if (resultLogin?.success === false) {
-    //     // Display result.errors or result.message in the form.
-    //     console.error(result);
-    //   }
-    // }
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error?.digest?.startsWith("NEXT_REDIRECT")) {
@@ -134,7 +119,4 @@ export const registerUser = async (data: registerInputs) => {
   }
 
   return resultLogin;
-
-  // Runs only after a successful response, outside try/catch.
-  // redirect("/blogs");
 };

@@ -2,14 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { ModeToggle } from "./ModeToggle";
+import { getCookie } from "@/app/services/auth/tokenHeaders";
+import LogOut from "./LogOut";
 
-const PublicNavbar = () => {
+const PublicNavbar = async () => {
+  const accessToken = await getCookie("accessToken");
+
   const navItems = [
     { href: "/blogs", label: "All Blogs" },
     // { href: "/health-plans", label: "Health Plans" },
     // { href: "/medicine", label: "Medicine" },
-    // { href: "/diagnostics", label: "Diagnostics" },
-    // { href: "/ngos", label: "NGOs" },
   ];
 
   const loginItems = [
@@ -43,11 +45,20 @@ const PublicNavbar = () => {
         </div> */}
 
         <div className="flex justify-center items-center gap-2">
-          {loginItems.map((link) => (
+          {accessToken ? (
+            <LogOut />
+          ) : (
+            loginItems.map((link) => (
+              <Button key={link.href}>
+                <Link href={link.href}>{link.label}</Link>
+              </Button>
+            ))
+          )}
+          {/* {loginItems.map((link) => (
             <Link key={link.label} href={link.href} prefetch={true}>
               <Button>{link.label}</Button>
             </Link>
-          ))}
+          ))} */}
           <ModeToggle></ModeToggle>
         </div>
 

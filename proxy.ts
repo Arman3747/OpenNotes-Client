@@ -24,8 +24,6 @@ export async function proxy(request: NextRequest) {
       process.env.JWT_ACCESS_SECRET as string,
     );
     if (typeof verifiedToken === "string") {
-      // cookieStore.delete("accessToken");
-      // cookieStore.delete("refreshToken");
       await deleteCookie("accessToken");
       await deleteCookie("refreshToken");
       return NextResponse.redirect(new URL("/login", request.url));

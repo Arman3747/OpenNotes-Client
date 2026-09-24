@@ -3,7 +3,6 @@
 
 import { redirect } from "next/navigation";
 import z from "zod";
-// import { parseCookie } from "cookie";
 import { parseSetCookie } from "cookie";
 import { setCookie } from "./tokenHeaders";
 import {
@@ -48,9 +47,6 @@ export const loginUser = async (data: loginInputs) => {
 
   const validatedFields = loginValidationZodSchema.safeParse(data);
 
-  // let accessTokenObject: null | any = null;
-  // let refreshTokenObject: null | any = null;
-
   if (!validatedFields.success) {
     return {
       success: false,
@@ -82,30 +78,6 @@ export const loginUser = async (data: loginInputs) => {
         message: "Login failed. Please check your email and password.",
       };
     }
-
-    // const setCookieHeaders = response.headers.getSetCookie();
-
-    // if (setCookieHeaders && setCookieHeaders.length > 0) {
-    //   setCookieHeaders.forEach((cookie: string) => {
-    //     const parsedCookie = parseCookie(cookie);
-
-    //     if (parsedCookie["accessToken"]) {
-    //       accessTokenObject = parsedCookie;
-    //     }
-    //     if (parsedCookie["refreshToken"]) {
-    //       refreshTokenObject = parsedCookie;
-    //     }
-    //   });
-    // } else {
-    //   throw new Error("No Set-Cookie header found!");
-    // }
-
-    // if (!accessTokenObject) {
-    //   throw new Error("accessTokenObject not found in cookies");
-    // }
-    // if (!refreshTokenObject) {
-    //   throw new Error("refreshTokenObject not found in cookies");
-    // }
 
     const parsedCookies = response.headers
       .getSetCookie()
@@ -188,7 +160,4 @@ export const loginUser = async (data: loginInputs) => {
       message: `${process.env.NODE_ENV === "development" ? error.message : "Login failed. You might have entered incorrect email or password."}`,
     };
   }
-
-  // Runs only after a successful response, outside try/catch.
-  // redirect("/blogs");
 };

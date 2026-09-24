@@ -18,13 +18,26 @@ const BlogCard = ({ blog }: { blog: any }) => {
       <div className="absolute inset-0 z-30 aspect-video" />
 
       {/* 245*137  */}
-      <Image
+      {/* <Image
         src={blog.coverImage}
         alt={blog.title}
         width={245}
         height={137}
         className="relative z-20 aspect-video w-full object-cover"
-      />
+        // fill
+        // sizes="(max-width: 768px) 100vw, 245px"
+        // className="z-20 object-cover"
+      /> */}
+      {/* changed from chat gpt  */}
+      <div className="relative aspect-video w-full">
+        <Image
+          src={blog.coverImage}
+          alt={blog.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 245px"
+          className="z-20 object-cover"
+        />
+      </div>
 
       <CardHeader>
         <CardTitle>{blog.title}</CardTitle>
