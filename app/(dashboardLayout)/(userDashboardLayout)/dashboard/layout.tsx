@@ -1,7 +1,13 @@
 import React from "react";
 
 const userDashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  return <div>{children}</div>;
+  return (
+    <>
+      {/* <PublicNavbar></PublicNavbar> */}
+      {children}
+      {/* <PublicFooter></PublicFooter> */}
+    </>
+  );
 };
 
 export default userDashboardLayout;
