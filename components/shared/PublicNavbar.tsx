@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { ModeToggle } from "./ModeToggle";
 import { getCookie } from "@/app/services/auth/tokenHeaders";
-import LogOut from "./LogOut";
+import ProfileMenu from "./ProfileMenu";
 
 const PublicNavbar = async () => {
   const accessToken = await getCookie("accessToken");
@@ -45,8 +45,9 @@ const PublicNavbar = async () => {
         </div> */}
 
         <div className="flex justify-center items-center gap-2">
+          <ModeToggle></ModeToggle>
           {accessToken ? (
-            <LogOut />
+            <ProfileMenu />
           ) : (
             loginItems.map((link) => (
               <Button key={link.href}>
@@ -54,12 +55,22 @@ const PublicNavbar = async () => {
               </Button>
             ))
           )}
+
+          {/* {accessToken ? (
+            <LogOut />
+          ) : (
+            loginItems.map((link) => (
+              <Button key={link.href}>
+                <Link href={link.href}>{link.label}</Link>
+              </Button>
+            ))
+          )} */}
+
           {/* {loginItems.map((link) => (
             <Link key={link.label} href={link.href} prefetch={true}>
               <Button>{link.label}</Button>
             </Link>
           ))} */}
-          <ModeToggle></ModeToggle>
         </div>
 
         {/* Mobile Menu */}
