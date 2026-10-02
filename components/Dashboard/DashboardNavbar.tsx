@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ModeToggle } from "../shared/ModeToggle";
 
 import ProfileMenu from "../shared/ProfileMenu";
+import GetUser from "./GetUser";
 
 const DashboardNavbar = async () => {
   return (
@@ -13,6 +14,8 @@ const DashboardNavbar = async () => {
           <Image src="/favicon.ico" width={32} height={32} alt="logo"></Image>
           <span className="text-xl font-bold text-primary">Open Notes</span>
         </Link>
+
+        <GetUser></GetUser>
 
         {/* // middle needed */}
         {/* <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">

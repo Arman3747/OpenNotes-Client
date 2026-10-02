@@ -72,9 +72,7 @@ export default function ProfileMenu() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-44">
-        <DropdownMenuItem render={<Link href="/" />}>
-          Home
-        </DropdownMenuItem>
+        <DropdownMenuItem render={<Link href="/" />}>Home</DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
