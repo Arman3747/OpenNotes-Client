@@ -1,5 +1,4 @@
 import DashboardNavbar from "@/components/Dashboard/DashboardNavbar";
-import DashboardSideNavigation from "@/components/Dashboard/DashboardSideNavigation";
 import UserSidebar from "@/components/Dashboard/UserSidebar";
 import {
   SidebarInset,
