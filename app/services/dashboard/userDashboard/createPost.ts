@@ -71,6 +71,10 @@ const createPostSchema = z.object({
     .max(10, "Use no more than 10 tags")
     .default([])
     .transform((tags) => [...new Set(tags)]),
+
+  status: z.enum(["DRAFT", "PUBLISHED"]).default("PUBLISHED"),
+
+  visibility: z.enum(["PUBLIC", "PRIVATE"]).default("PUBLIC"),
 });
 
 type CreatePostInput = {
@@ -78,6 +82,8 @@ type CreatePostInput = {
   content: JSONContent;
   categoryId: string;
   tags: string[];
+  status: "DRAFT" | "PUBLISHED";
+  visibility: "PUBLIC" | "PRIVATE";
 };
 
 type CreatePostFailure = {
@@ -130,9 +136,10 @@ export async function createPost(
         "Content-Type": "application/json",
         Cookie: `accessToken=${encodeURIComponent(accessToken)}`,
       },
-      body: JSON.stringify({
-        ...validation.data,
-      }),
+      // body: JSON.stringify({
+      //   ...validation.data,
+      // }),
+      body: JSON.stringify(validation.data),
       cache: "no-store",
     });
   } catch {

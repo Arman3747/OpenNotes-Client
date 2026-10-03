@@ -1,14 +1,25 @@
 "use client";
 
 import { useEffect } from "react";
+
 import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import { TextStyle, Color } from "@tiptap/extension-text-style";
 import Highlight from "@tiptap/extension-highlight";
-import { useForm, type SubmitHandler } from "react-hook-form";
+
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { createPost } from "@/app/services/dashboard/userDashboard/createPost";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,6 +29,8 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+// import { Switch } from "@/components/ui/switch";
+
 import EditorToolbar from "./EditorToolbar";
 
 type Category = {
@@ -29,6 +42,8 @@ type FormValues = {
   title: string;
   categoryId: string;
   tags: string;
+  status: "DRAFT" | "PUBLISHED";
+  visibility: "PUBLIC" | "PRIVATE";
 };
 
 type CreatePostFormProps = {
@@ -49,6 +64,7 @@ function parseTags(value: string): string[] {
 export default function CreatePostForm({ categories }: CreatePostFormProps) {
   const {
     register,
+    control,
     handleSubmit,
     setError,
     clearErrors,
@@ -58,6 +74,8 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
       title: "",
       categoryId: "",
       tags: "",
+      status: "PUBLISHED",
+      visibility: "PUBLIC",
     },
   });
 
@@ -153,11 +171,13 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
 
     try {
       const result = await createPost({
-        title: data.title.trim(),
-        categoryId: data.categoryId,
-        tags: parseTags(data.tags),
-        content,
-      });
+      title: data.title.trim(),
+      categoryId: data.categoryId,
+      tags: parseTags(data.tags),
+      content,
+      status: data.status,
+      visibility: data.visibility,
+    });
 
       if (result?.success === false) {
         setError("root", {
@@ -184,6 +204,7 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
       <h1 className="text-2xl font-semibold">Create Post</h1>
 
       <FieldGroup>
+        {/* Title  */}
         <Field data-invalid={!!errors.title}>
           <FieldLabel htmlFor="title">Title</FieldLabel>
 
@@ -206,7 +227,8 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
           {errors.title && <FieldError>{errors.title.message}</FieldError>}
         </Field>
 
-        <Field data-invalid={!!errors.categoryId}>
+        {/* old category */}
+        {/* <Field data-invalid={!!errors.categoryId}>
           <FieldLabel htmlFor="categoryId">Category</FieldLabel>
 
           <select
@@ -234,8 +256,67 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
           {errors.categoryId && (
             <FieldError>{errors.categoryId.message}</FieldError>
           )}
-        </Field>
+        </Field> */}
 
+        {/* new category  */}
+        <Controller
+          name="categoryId"
+          control={control}
+          rules={{
+            required: "Please select a category",
+          }}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="categoryId">Category</FieldLabel>
+
+              <Select
+                name={field.name}
+                value={field.value || null}
+                onValueChange={(value) => field.onChange(value ?? "")}
+                disabled={isSubmitting || categories.length === 0}
+                items={categories.map((category) => ({
+                  label: category.categoriesName,
+                  value: category.id,
+                }))}
+              >
+                <SelectTrigger
+                  id="categoryId"
+                  ref={field.ref}
+                  onBlur={field.onBlur}
+                  aria-invalid={fieldState.invalid}
+                  aria-describedby={
+                    fieldState.error ? "categoryId-error" : undefined
+                  }
+                  className="w-full"
+                >
+                  <SelectValue
+                    placeholder={
+                      categories.length === 0
+                        ? "No categories available"
+                        : "Select a category"
+                    }
+                  />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.categoriesName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {fieldState.error && (
+                <FieldError id="categoryId-error">
+                  {fieldState.error.message}
+                </FieldError>
+              )}
+            </Field>
+          )}
+        />
+
+        {/* tags  */}
         <Field data-invalid={!!errors.tags}>
           <FieldLabel htmlFor="tags">Tags</FieldLabel>
 
@@ -262,6 +343,111 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
           {errors.tags && <FieldError>{errors.tags.message}</FieldError>}
         </Field>
 
+        {/* <Controller
+          name="isFeatured"
+          control={control}
+          render={({ field }) => (
+            <Field orientation="horizontal">
+              <div className="flex-1 space-y-1">
+                <FieldLabel htmlFor="isFeatured">Featured post</FieldLabel>
+                <FieldDescription>Mark this post as featured.</FieldDescription>
+              </div>
+
+              <Switch
+                id="isFeatured"
+                name={field.name}
+                ref={field.ref}
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                onBlur={field.onBlur}
+                disabled={isSubmitting}
+              />
+            </Field>
+          )}
+        /> */}
+
+        <Controller
+          name="status"
+          control={control}
+          render={({ field }) => (
+            <Field>
+              <FieldLabel htmlFor="status">Status</FieldLabel>
+
+              <Select
+                name={field.name}
+                value={field.value}
+                onValueChange={(value) => {
+                  if (value !== null) field.onChange(value);
+                }}
+                disabled={isSubmitting}
+                items={[
+                  { label: "Draft", value: "DRAFT" },
+                  { label: "Published", value: "PUBLISHED" },
+                ]}
+              >
+                <SelectTrigger
+                  id="status"
+                  ref={field.ref}
+                  onBlur={field.onBlur}
+                  className="w-full"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="DRAFT">Draft</SelectItem>
+                  <SelectItem value="PUBLISHED">Published</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <FieldDescription>
+                Save as a draft or publish your post.
+              </FieldDescription>
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="visibility"
+          control={control}
+          render={({ field }) => (
+            <Field>
+              <FieldLabel htmlFor="visibility">Visibility</FieldLabel>
+
+              <Select
+                name={field.name}
+                value={field.value}
+                onValueChange={(value) => {
+                  if (value !== null) field.onChange(value);
+                }}
+                disabled={isSubmitting}
+                items={[
+                  { label: "Public", value: "PUBLIC" },
+                  { label: "Private", value: "PRIVATE" },
+                ]}
+              >
+                <SelectTrigger
+                  id="visibility"
+                  ref={field.ref}
+                  onBlur={field.onBlur}
+                  className="w-full"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="PUBLIC">Public</SelectItem>
+                  <SelectItem value="PRIVATE">Private</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <FieldDescription>
+                Choose who can view your published post.
+              </FieldDescription>
+            </Field>
+          )}
+        />
+
         <div className="space-y-2">
           <p className="text-sm font-medium">Content</p>
 
@@ -284,7 +470,6 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
             {errors.root.message}
           </p>
         )}
-
         <Button
           type="submit"
           disabled={!editor || isSubmitting || categories.length === 0}
