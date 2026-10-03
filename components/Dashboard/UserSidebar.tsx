@@ -49,26 +49,26 @@ const groups = [
         href: "/dashboard/posts/create",
         icon: SquarePen,
       },
-      {
-        title: "Drafts",
-        href: "/dashboard/posts/drafts",
-        icon: FilePenLine,
-      },
-      {
-        title: "Bookmarks",
-        href: "/dashboard/bookmarks",
-        icon: Bookmark,
-      },
-      {
-        title: "My Comments",
-        href: "/dashboard/comments",
-        icon: MessageSquare,
-      },
-      {
-        title: "Notifications",
-        href: "/dashboard/notifications",
-        icon: Bell,
-      },
+      // {
+      //   title: "Drafts",
+      //   href: "/dashboard/posts/drafts",
+      //   icon: FilePenLine,
+      // },
+      // {
+      //   title: "Bookmarks",
+      //   href: "/dashboard/bookmarks",
+      //   icon: Bookmark,
+      // },
+      // {
+      //   title: "My Comments",
+      //   href: "/dashboard/comments",
+      //   icon: MessageSquare,
+      // },
+      // {
+      //   title: "Notifications",
+      //   href: "/dashboard/notifications",
+      //   icon: Bell,
+      // },
     ],
   },
   {
