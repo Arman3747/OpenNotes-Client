@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
+import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import { TextStyle, Color } from "@tiptap/extension-text-style";
@@ -44,6 +44,7 @@ type FormValues = {
   tags: string;
   status: "DRAFT" | "PUBLISHED";
   visibility: "PUBLIC" | "PRIVATE";
+  coverImage?: FileList;
 };
 
 type CreatePostFormProps = {
@@ -143,6 +144,58 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
     editor?.setEditable(!isSubmitting);
   }, [editor, isSubmitting]);
 
+  // const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  //   const imageFile = data.coverImage?.[0];
+  //   clearErrors("root");
+
+  //   if (!editor || !editor.getText().trim()) {
+  //     setError("root", {
+  //       type: "manual",
+  //       message: "Please write some content.",
+  //     });
+  //     return;
+  //   }
+
+  //   // const content = editor.getJSON();
+  //   const content = JSON.parse(JSON.stringify(editor.getJSON())) as JSONContent;
+
+  //   console.log("Client first block:", content.content?.[0]);
+  //   console.log("Client attrs type:", typeof content.content?.[0]?.attrs);
+  //   console.log("Client attrs:", content.content?.[0]?.attrs);
+
+  //   if (JSON.stringify(content).length > 100_000) {
+  //     setError("root", {
+  //       type: "manual",
+  //       message: "Content is too large.",
+  //     });
+  //     return;
+  //   }
+
+  //   try {
+  //     const result = await createPost({
+  //       title: data.title.trim(),
+  //       categoryId: data.categoryId,
+  //       tags: parseTags(data.tags),
+  //       content,
+  //       status: data.status,
+  //       visibility: data.visibility,
+  //     });
+
+  //     if (result?.success === false) {
+  //       setError("root", {
+  //         type: "server",
+  //         message: result.message,
+  //       });
+  //     }
+  //   } catch {
+  //     setError("root", {
+  //       type: "server",
+  //       message:
+  //         "Could not confirm whether your post was saved. Check My Posts before retrying.",
+  //     });
+  //   }
+  // };
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     clearErrors("root");
 
@@ -154,12 +207,8 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
       return;
     }
 
-    // const content = editor.getJSON();
-    const content = JSON.parse(JSON.stringify(editor.getJSON())) as JSONContent;
-
-    console.log("Client first block:", content.content?.[0]);
-    console.log("Client attrs type:", typeof content.content?.[0]?.attrs);
-    console.log("Client attrs:", content.content?.[0]?.attrs);
+    const imageFile = data.coverImage?.[0];
+    const content = editor.getJSON();
 
     if (JSON.stringify(content).length > 100_000) {
       setError("root", {
@@ -169,15 +218,46 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
       return;
     }
 
+    if (imageFile) {
+      const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+      if (!allowedTypes.includes(imageFile.type)) {
+        setError("coverImage", {
+          type: "manual",
+          message: "Please select a JPEG, PNG, or WebP image.",
+        });
+        return;
+      }
+
+      if (imageFile.size > 2 * 1024 * 1024) {
+        setError("coverImage", {
+          type: "manual",
+          message: "Image must be 2 MB or smaller.",
+        });
+        return;
+      }
+    }
+
     try {
-      const result = await createPost({
-      title: data.title.trim(),
-      categoryId: data.categoryId,
-      tags: parseTags(data.tags),
-      content,
-      status: data.status,
-      visibility: data.visibility,
-    });
+      const formData = new FormData();
+
+      formData.append(
+        "data",
+        JSON.stringify({
+          title: data.title.trim(),
+          categoryId: data.categoryId,
+          tags: parseTags(data.tags),
+          content,
+          status: data.status,
+          visibility: data.visibility,
+        }),
+      );
+
+      if (imageFile) {
+        formData.append("file", imageFile, imageFile.name);
+      }
+
+      const result = await createPost(formData);
 
       if (result?.success === false) {
         setError("root", {
@@ -447,6 +527,51 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
             </Field>
           )}
         />
+
+        <Field data-invalid={!!errors.coverImage}>
+          <FieldLabel htmlFor="coverImage">Cover image</FieldLabel>
+
+          <Input
+            id="coverImage"
+            type="file"
+            accept="image/jpg,image/jpeg,image/png,image/webp"
+            disabled={isSubmitting}
+            aria-invalid={!!errors.coverImage}
+            {...register("coverImage", {
+              validate: {
+                fileType: (files) => {
+                  const file = files?.[0];
+
+                  return (
+                    !file ||
+                    ["image/jpeg", "image/png", "image/webp"].includes(
+                      file.type,
+                    ) ||
+                    "Please select a JPEG, PNG, or WebP image"
+                  );
+                },
+
+                fileSize: (files) => {
+                  const file = files?.[0];
+
+                  return (
+                    !file ||
+                    file.size <= 2 * 1024 * 1024 ||
+                    "Image must be 2 MB or smaller"
+                  );
+                },
+              },
+            })}
+          />
+
+          <FieldDescription>
+            JPG, JPEG, PNG, or WebP, up to 2 MB.
+          </FieldDescription>
+
+          {errors.coverImage && (
+            <FieldError>{errors.coverImage.message}</FieldError>
+          )}
+        </Field>
 
         <div className="space-y-2">
           <p className="text-sm font-medium">Content</p>
