@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -69,6 +69,7 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
     handleSubmit,
     setError,
     clearErrors,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     defaultValues: {
@@ -80,6 +81,27 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
     },
   });
 
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const selectedImage = watch("coverImage")?.[0];
+
+  useEffect(() => {
+    if (
+      !selectedImage ||
+      !["image/jpeg", "image/png", "image/webp"].includes(selectedImage.type) ||
+      selectedImage.size > 2 * 1024 * 1024
+    ) {
+      setImagePreview(null);
+      return;
+    }
+
+    const previewUrl = URL.createObjectURL(selectedImage);
+    setImagePreview(previewUrl);
+
+    return () => {
+      URL.revokeObjectURL(previewUrl);
+    };
+  }, [selectedImage]);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -528,6 +550,17 @@ export default function CreatePostForm({ categories }: CreatePostFormProps) {
           )}
         />
 
+        {imagePreview && (
+          <div className="mt-3 overflow-hidden rounded-lg border">
+            {/* Local file preview */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imagePreview}
+              alt="Selected cover image preview"
+              className="max-h-72 w-full object-contain"
+            />
+          </div>
+        )}
         <Field data-invalid={!!errors.coverImage}>
           <FieldLabel htmlFor="coverImage">Cover image</FieldLabel>
 

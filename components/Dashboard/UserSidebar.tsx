@@ -46,7 +46,7 @@ const groups = [
       },
       {
         title: "Create Post",
-        href: "/dashboard/posts/create",
+        href: "/dashboard/create",
         icon: SquarePen,
       },
       // {
@@ -76,14 +76,14 @@ const groups = [
     items: [
       {
         title: "My Profile",
-        href: "/myProfile",
+        href: "/dashboard/myProfile",
         icon: UserRound,
       },
-      {
-        title: "Settings",
-        href: "/settings",
-        icon: Settings,
-      },
+      // {
+      //   title: "Settings",
+      //   href: "/settings",
+      //   icon: Settings,
+      // },
       {
         title: "Change Password",
         href: "/change-password",

@@ -9,7 +9,7 @@ import GetUser from "./GetUser";
 const DashboardNavbar = async () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur dark:bg-background/95 px-2">
-      <div className="max-w-3xl mx-auto flex h-16 items-center justify-between">
+      <div className="flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
           <Image src="/favicon.ico" width={32} height={32} alt="logo"></Image>
           <span className="text-xl font-bold text-primary">Open Notes</span>
