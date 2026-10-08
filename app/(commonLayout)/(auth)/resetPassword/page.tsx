@@ -1,3 +1,4 @@
+import ResetPasswordForm from "@/components/Auth/ResetPasswordForm";
 import React from "react";
 
 const ResetPasswordPage = () => {
@@ -9,7 +10,7 @@ const ResetPasswordPage = () => {
             {/* <Login redirect={params.redirect}></Login>
              */}
             {/* <ForgotPassword></ForgotPassword> */}
-            reset page
+            <ResetPasswordForm></ResetPasswordForm>
           </div>
         </div>
       </section>
