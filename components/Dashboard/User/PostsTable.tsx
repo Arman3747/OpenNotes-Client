@@ -104,9 +104,7 @@ export default function PostsTable({ posts }: PostsTableProps) {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                      render={
-                        <Link href={`/dashboard/posts/${post.id}/edit`} />
-                      }
+                      render={<Link href={`/dashboard/edit/${post.id}`} />}
                     >
                       Edit
                     </DropdownMenuItem>
