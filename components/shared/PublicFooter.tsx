@@ -1,7 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-import { Button } from "../ui/button";
 
 const PublicFooter = () => {
   return (
@@ -15,7 +13,8 @@ const PublicFooter = () => {
         </div>
 
         <div>
-            <Button>All Blogs</Button>
+          {/* <Button>All Blogs</Button> */}
+          <p>&copy; 2026 OpenNotes. All rights reserved.</p>
         </div>
       </div>
     </footer>

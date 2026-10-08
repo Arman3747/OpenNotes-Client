@@ -24,6 +24,7 @@ import {
 type Post = {
   id: string;
   title: string;
+  slug: string;
   coverImage: string | null;
 };
 
@@ -97,7 +98,7 @@ export default function PostsTable({ posts }: PostsTableProps) {
 
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
-                      render={<Link href={`/blogs/${post.id}`} />}
+                      render={<Link href={`/blogSlugs/${post.slug}`} />}
                     >
                       View
                     </DropdownMenuItem>
