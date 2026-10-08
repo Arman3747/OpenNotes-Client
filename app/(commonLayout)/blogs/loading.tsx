@@ -1,11 +1,11 @@
-import Loading from "@/components/ui/Loading";
+// import Loading from "@/components/ui/Loading";
 
-const BlogsLoadingPage = () => {
-  return (
-    <div className="py-24">
-      <Loading></Loading>
-    </div>
-  );
-};
+// const BlogsLoadingPage = () => {
+//   return (
+//     <div className="py-24">
+//       <Loading></Loading>
+//     </div>
+//   );
+// };
 
-export default BlogsLoadingPage;
+// export default BlogsLoadingPage;

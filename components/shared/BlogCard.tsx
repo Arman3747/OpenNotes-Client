@@ -64,7 +64,11 @@ const BlogCard = ({ blog }: { blog: any }) => {
       </CardHeader>
       <CardFooter>
         {/* <Button className="w-full">Read More</Button> */}
-        <Link className="w-full" href={`/blogs/${blog.id}`} prefetch={true}>
+        <Link
+          className="w-full"
+          href={`/blogSlugs/${blog.slug}`}
+          prefetch={true}
+        >
           <Button className="w-full">Read More</Button>
         </Link>
       </CardFooter>

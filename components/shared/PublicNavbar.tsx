@@ -9,7 +9,7 @@ const PublicNavbar = async () => {
   const accessToken = await getCookie("accessToken");
 
   const navItems = [
-    { href: "/blogs", label: "All Blogs" },
+    { href: "/blogSlugs", label: "All Blogs" },
     // { href: "/health-plans", label: "Health Plans" },
     // { href: "/medicine", label: "Medicine" },
   ];
