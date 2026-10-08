@@ -33,7 +33,11 @@ const BlogDetailsCard = ({ blog }: { blog: any }) => {
       </CardHeader>
       {/* <CardContent>{blog?.content}</CardContent> */}
       <CardContent>
-        <JsonBlogCard content={blog?.content}></JsonBlogCard>
+        {blog?.content ? (
+          <JsonBlogCard content={blog.content} />
+        ) : (
+          <p className="text-muted-foreground">No content available.</p>
+        )}
       </CardContent>
 
       {/* <CardFooter>
