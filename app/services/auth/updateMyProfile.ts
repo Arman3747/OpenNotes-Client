@@ -6,6 +6,9 @@ import { z } from "zod";
 
 import { getCurrentUser } from "@/lib/getCurrentUser";
 
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
 const nullableText = (max: number) =>
   z
     .string()
@@ -14,13 +17,18 @@ const nullableText = (max: number) =>
     .transform((value) => value || null);
 
 const nullableUrl = z
-  .union([
-    z.literal(""),
-    z.url({
-      protocol: /^https?$/,
-      error: "Enter a full HTTP or HTTPS URL",
-    }),
-  ])
+  .string()
+  .trim()
+  .max(2048)
+  .pipe(
+    z.union([
+      z.literal(""),
+      z.url({
+        protocol: /^https?$/,
+        error: "Enter a full HTTP or HTTPS URL",
+      }),
+    ]),
+  )
   .transform((value) => value || null);
 
 const updateProfileSchema = z
@@ -37,21 +45,19 @@ const updateProfileSchema = z
       )
       .transform((value) => value || null),
 
-    profilePhoto: nullableUrl,
     boi: nullableText(500),
     phone: nullableText(30),
     country: nullableText(100),
     website: nullableUrl,
     instagram: nullableText(100),
   })
-  .partial()
-  .refine((data) => Object.keys(data).length > 0, {
-    message: "No changes provided",
-  });
+  .partial();
 
 type UpdateResult = { success: true } | { success: false; message: string };
 
-export async function updateMyProfile(input: unknown): Promise<UpdateResult> {
+export async function updateMyProfile(
+  formData: FormData,
+): Promise<UpdateResult> {
   const user = await getCurrentUser();
 
   const cookieStore = await cookies();
@@ -61,6 +67,26 @@ export async function updateMyProfile(input: unknown): Promise<UpdateResult> {
     return {
       success: false,
       message: "Please log in to update your profile.",
+    };
+  }
+
+  const rawData = formData.get("data");
+
+  if (typeof rawData !== "string") {
+    return {
+      success: false,
+      message: "Profile data is missing.",
+    };
+  }
+
+  let input: unknown;
+
+  try {
+    input = JSON.parse(rawData);
+  } catch {
+    return {
+      success: false,
+      message: "Invalid profile data.",
     };
   }
 
@@ -77,6 +103,46 @@ export async function updateMyProfile(input: unknown): Promise<UpdateResult> {
     };
   }
 
+  const image = formData.get("file");
+
+  if (image !== null) {
+    if (!(image instanceof File)) {
+      return {
+        success: false,
+        message: "Invalid image upload.",
+      };
+    }
+
+    if (!IMAGE_TYPES.includes(image.type)) {
+      return {
+        success: false,
+        message: "Please select a JPEG, PNG, or WebP image.",
+      };
+    }
+
+    if (image.size === 0 || image.size > MAX_IMAGE_SIZE) {
+      return {
+        success: false,
+        message: "Image must not be empty or exceed 2 MB.",
+      };
+    }
+  }
+
+  if (Object.keys(validation.data).length === 0 && image === null) {
+    return {
+      success: false,
+      message: "No changes provided.",
+    };
+  }
+
+  const backendFormData = new FormData();
+
+  backendFormData.append("data", JSON.stringify(validation.data));
+
+  if (image instanceof File) {
+    backendFormData.append("file", image, image.name);
+  }
+
   let response: Response;
 
   try {
@@ -86,10 +152,9 @@ export async function updateMyProfile(input: unknown): Promise<UpdateResult> {
         method: "PATCH",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json",
           Cookie: `accessToken=${encodeURIComponent(accessToken)}`,
         },
-        body: JSON.stringify(validation.data),
+        body: backendFormData,
         cache: "no-store",
       },
     );
@@ -111,15 +176,20 @@ export async function updateMyProfile(input: unknown): Promise<UpdateResult> {
             ? "You cannot update this profile."
             : response.status === 409
               ? "That username is already taken."
-              : "Could not update your profile. Check your details.",
+              : response.status === 413
+                ? "The uploaded image is too large."
+                : "Could not update your profile. Check your details.",
     };
   }
 
-  // Accept a successful empty response or your usual JSON envelope.
   if (response.status !== 204) {
     const result: unknown = await response.json().catch(() => null);
 
-    if (!z.object({ success: z.literal(true) }).safeParse(result).success) {
+    const successResponse = z.object({
+      success: z.literal(true),
+    });
+
+    if (!successResponse.safeParse(result).success) {
       return {
         success: false,
         message:

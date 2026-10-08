@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "6mb",
+    },
+  },
+
   //will not show the userName or Password in the console log in development
   // logging: {
   //   serverFunctions: false,

@@ -33,34 +33,6 @@ export type UserProfileResponse = {
   data: UserProfile;
 };
 
-/**
- * 
- * {
-    "success": true,
-    "message": "Profile retrieved successfully",
-    "data": {
-        "id": "ed936fb4-abfc-4610-b379-c34a8a9b1837",
-        "email": "mia@yopmail.com",
-        "name": "mia mia mia",
-        "username": null,
-        "profilePhoto": null,
-        "boi": null,
-        "role": "USER",
-        "phone": null,
-        "country": null,
-        "status": "ACTIVE",
-        "isVerified": false,
-        "website": null,
-        "instagram": null,
-        "followersCount": 0,
-        "followingCount": 0,
-        "postsCount": 14,
-        "createdAt": "2026-09-22T23:59:44.714Z",
-        "updatedAt": "2026-10-07T04:51:55.896Z"
-    }
-}
-*/
-
 const MyProfilePage = async () => {
   const loginUrl = "/login?redirect=%2Fdashboard";
 
