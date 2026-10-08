@@ -86,7 +86,7 @@ const groups = [
       // },
       {
         title: "Change Password",
-        href: "/change-password",
+        href: "/dashboard/changePassword",
         icon: KeyRound,
       },
     ],

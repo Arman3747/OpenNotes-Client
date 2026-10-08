@@ -132,6 +132,17 @@ const Login = ({ redirect }: { redirect?: string | undefined }) => {
                 <FieldError>{errors.root.server.message}</FieldError>
               )}
 
+              <FieldDescription>
+                <Link
+                  href={{
+                    pathname: "/forgotPassword",
+                    query: redirect ? { redirect } : {},
+                  }}
+                >
+                  Forgot password?
+                </Link>
+              </FieldDescription>
+
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Logging in..." : "Login"}
               </Button>
