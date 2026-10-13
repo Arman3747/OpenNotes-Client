@@ -68,7 +68,7 @@ export default function JsonBlogCard({ content }: BlogContentProps) {
         "[&_pre]:rounded-lg [&_pre]:border [&_pre]:border-border",
         "[&_pre]:bg-muted [&_pre]:text-foreground",
         "[&_pre]:p-4",
-        "[&_pre]:whitespace-pre [&_pre]:[overflow-wrap:normal]",
+        "[&_pre]:whitespace-pre [&_pre]:wrap-normal",
         "[&_pre_code]:bg-transparent [&_pre_code]:p-0",
         "[&_pre_code]:text-inherit",
 
@@ -77,8 +77,8 @@ export default function JsonBlogCard({ content }: BlogContentProps) {
         "[&_hr]:my-6 [&_hr]:border-border",
 
         // Avoid extra space at the boundaries
-        "[&>:first-child]:mt-0",
-        "[&>:last-child]:mb-0",
+        "*:first:mt-0",
+        "*:last:mb-0",
       ].join(" ")}
     >
       {renderToReactElement({

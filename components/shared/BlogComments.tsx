@@ -14,6 +14,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { createComment } from "@/app/services/public/createComment";
+import { FormattedDate } from "./FormattedDate";
+import CommentDateFormat from "./commentdateformate";
 
 type BlogCommentsProps = {
   postId: string;
@@ -245,12 +247,22 @@ export default function BlogComments({
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                         <p className="text-sm font-semibold">{name}</p>
 
-                        <time
+                        {/* <time
                           dateTime={comment.createdAt}
                           className="text-xs text-muted-foreground"
                         >
                           {formatDate(comment.createdAt)}
-                        </time>
+                        </time> */}
+                        {/* <div className="text-xs text-muted-foreground">
+                          <FormattedDate
+                            dateString={comment?.createdAt}
+                          ></FormattedDate>
+                        </div> */}
+
+                        <CommentDateFormat
+                          dateString={comment?.createdAt}
+                          className="text-xs text-muted-foreground"
+                        />
 
                         {comment.isEdited && (
                           <span className="text-xs text-muted-foreground">
