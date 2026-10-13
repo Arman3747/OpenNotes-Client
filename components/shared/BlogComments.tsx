@@ -14,7 +14,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { createComment } from "@/app/services/public/createComment";
-import { FormattedDate } from "./FormattedDate";
 import CommentDateFormat from "./commentdateformate";
 
 type BlogCommentsProps = {
@@ -37,15 +36,6 @@ function getInitials(name: string): string {
       .join("")
       .toUpperCase() || "U"
   );
-}
-
-function formatDate(value: string): string {
-  return new Intl.DateTimeFormat("en-AU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(value));
 }
 
 export default function BlogComments({
