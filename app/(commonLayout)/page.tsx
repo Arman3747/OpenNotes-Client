@@ -15,7 +15,7 @@ export default async function Home() {
           <div className="flex flex-col justify-start items-start">
             <h3 className="text-5xl my-2">Open Notes</h3>
             <p>
-              Open Totes is a vibrant blog offering fresh perspectives, engaging
+              Open Notes is a vibrant blog offering fresh perspectives, engaging
               stories, and insightful lifestyle ideas.
             </p>
           </div>
