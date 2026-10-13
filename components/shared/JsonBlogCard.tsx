@@ -56,9 +56,18 @@ export default function JsonBlogCard({ content }: BlogContentProps) {
         "[&_code]:font-mono [&_code]:text-sm",
 
         // Code blocks
+        // "[&_pre]:my-5 [&_pre]:overflow-x-auto",
+        // "[&_pre]:rounded-lg [&_pre]:bg-zinc-900",
+        // "[&_pre]:p-4 [&_pre]:text-zinc-100",
+        // "[&_pre]:whitespace-pre [&_pre]:[overflow-wrap:normal]",
+        // "[&_pre_code]:bg-transparent [&_pre_code]:p-0",
+        // "[&_pre_code]:text-inherit",
+
+        // Code blocks
         "[&_pre]:my-5 [&_pre]:overflow-x-auto",
-        "[&_pre]:rounded-lg [&_pre]:bg-zinc-900",
-        "[&_pre]:p-4 [&_pre]:text-zinc-100",
+        "[&_pre]:rounded-lg [&_pre]:border [&_pre]:border-border",
+        "[&_pre]:bg-muted [&_pre]:text-foreground",
+        "[&_pre]:p-4",
         "[&_pre]:whitespace-pre [&_pre]:[overflow-wrap:normal]",
         "[&_pre_code]:bg-transparent [&_pre_code]:p-0",
         "[&_pre_code]:text-inherit",

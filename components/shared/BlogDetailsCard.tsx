@@ -13,7 +13,7 @@ import JsonBlogCard from "./JsonBlogCard";
 const BlogDetailsCard = ({ blog }: { blog: any }) => {
   return (
     <Card className="relative mx-auto w-full pt-0">
-      <div className="absolute inset-0 z-30 aspect-video" />
+      {/* <div className="absolute inset-0 z-30 aspect-video" /> */}
       <Image
         src={blog.coverImage}
         alt={blog.title}
