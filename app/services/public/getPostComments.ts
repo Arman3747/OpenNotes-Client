@@ -38,8 +38,14 @@ export async function getPostComments(
   postId: string,
   page = 1,
 ): Promise<PostCommentsData> {
+  const baseUrl = process.env.BASE_API_URL;
+
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
+
   const url = new URL(
-    `http://localhost:5000/api/v1/posts/${encodeURIComponent(postId)}/comments`,
+    `${baseUrl}/posts/${encodeURIComponent(postId)}/comments`,
   );
 
   url.searchParams.set("page", String(page));

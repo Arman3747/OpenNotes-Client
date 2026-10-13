@@ -49,7 +49,13 @@ const MyProfilePage = async () => {
     redirect(loginUrl);
   }
 
-  const response = await fetch("http://localhost:5000/api/v1/user/me", {
+  const baseUrl = process.env.BASE_API_URL;
+
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
+
+  const response = await fetch(`${baseUrl}/user/me`, {
     headers: {
       Accept: "application/json",
       Cookie: `accessToken=${encodeURIComponent(accessToken)}`,

@@ -23,19 +23,22 @@ export async function forgotPassword(
     };
   }
 
+  const baseUrl = process.env.BASE_API_URL;
+
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
+
   try {
-    const response = await fetch(
-      "http://localhost:5000/api/v1/auth/forgot-password",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(validation.data),
-        cache: "no-store",
+    const response = await fetch(`${baseUrl}/auth/forgot-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
-    );
+      body: JSON.stringify(validation.data),
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       return {

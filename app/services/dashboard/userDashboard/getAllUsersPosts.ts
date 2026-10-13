@@ -65,7 +65,13 @@ export async function getAllUsersPosts({
     redirect(loginPath);
   }
 
-  const url = new URL("http://localhost:5000/api/v1/post");
+  const baseUrl = process.env.BASE_API_URL;
+
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
+
+  const url = new URL(`${baseUrl}/post`);
 
   url.searchParams.set("authorId", authorId);
   url.searchParams.set("page", String(page));

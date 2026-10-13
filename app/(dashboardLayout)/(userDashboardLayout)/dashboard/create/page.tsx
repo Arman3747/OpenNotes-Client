@@ -20,7 +20,12 @@ const CreatePostsPage = async () => {
     redirect("/login?redirect=%2Fdashboard%2Fposts%2Fcreate");
   }
 
-  const response = await fetch("http://localhost:5000/api/v1/categories", {
+  const baseUrl = process.env.BASE_API_URL;
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
+
+  const response = await fetch(`${baseUrl}/categories`, {
     cache: "no-store",
   });
 

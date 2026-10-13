@@ -80,9 +80,15 @@ export async function updatePost(
     backendFormData.set("file", image, image.name);
   }
 
+  const baseUrl = process.env.BASE_API_URL;
+
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
+
   try {
     const response = await fetch(
-      `http://localhost:5000/api/v1/post/${encodeURIComponent(postId)}`,
+      `${baseUrl}/post/${encodeURIComponent(postId)}`,
       {
         method: "PATCH",
         headers: {
@@ -137,7 +143,7 @@ export async function updatePost(
   revalidatePath("/blogSlugs");
 
   // Invalidate individual blog pages, whether they use an ID or slug.
-//   revalidatePath("/blogs/[blogId]", "page");
+  //   revalidatePath("/blogs/[blogId]", "page");
 
   return { success: true };
 }

@@ -48,20 +48,23 @@ export async function changePassword(
     };
   }
 
+  const baseUrl = process.env.BASE_API_URL;
+
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
+
   try {
-    const response = await fetch(
-      "http://localhost:5000/api/v1/auth/change-password",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Cookie: `accessToken=${encodeURIComponent(accessToken)}`,
-        },
-        body: JSON.stringify(validation.data),
-        cache: "no-store",
+    const response = await fetch(`${baseUrl}/auth/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: `accessToken=${encodeURIComponent(accessToken)}`,
       },
-    );
+      body: JSON.stringify(validation.data),
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       return {

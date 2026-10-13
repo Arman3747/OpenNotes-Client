@@ -114,7 +114,7 @@ export const isValidRedirectForRole = (
     return false;
   }
 
-  const pathname = new URL(redirectPath, "http://localhost").pathname;
+  const pathname = new URL(redirectPath, "http://loscalhost").pathname;
   const routeOwner = getRouteOwner(pathname);
 
   return routeOwner === null ||

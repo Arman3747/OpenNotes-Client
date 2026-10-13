@@ -64,8 +64,14 @@ export const registerUser = async (data: registerInputs) => {
 
   const { name, email, password } = validatedFields.data;
 
+  const baseUrl = process.env.BASE_API_URL;
+
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
+
   try {
-    const response = await fetch("http://localhost:5000/api/v1/auth/register", {
+    const response = await fetch(`${baseUrl}/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

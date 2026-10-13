@@ -4,18 +4,13 @@ import { z } from "zod";
 
 import { getCurrentUser } from "@/lib/getCurrentUser";
 import EditPostForm from "@/components/Dashboard/User/EditPostForm";
-import {
-  editablePostSchema,
-  categorySchema,
-} from "@/lib/editPost";
+import { editablePostSchema, categorySchema } from "@/lib/editPost";
 
 type EditPostPageProps = {
   params: Promise<{ editId: string }>;
 };
 
-export default async function EditPostPage({
-  params,
-}: EditPostPageProps) {
+export default async function EditPostPage({ params }: EditPostPageProps) {
   const { editId } = await params;
 
   if (!z.uuid().safeParse(editId).success) {
@@ -38,8 +33,12 @@ export default async function EditPostPage({
     Cookie: `accessToken=${encodeURIComponent(accessToken)}`,
   };
 
+  const baseUrl = process.env.BASE_API_URL;
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
   const postResponse = await fetch(
-    `http://localhost:5000/api/v1/post/${encodeURIComponent(editId)}`,
+    `${baseUrl}/post/${encodeURIComponent(editId)}`,
     {
       headers,
       cache: "no-store",
@@ -89,20 +88,15 @@ export default async function EditPostPage({
   // The backend must independently enforce ownership on PATCH.
   if (post.authorId !== user.id) {
     return (
-      <p className="p-6 text-destructive">
-        You can only edit your own posts.
-      </p>
+      <p className="p-6 text-destructive">You can only edit your own posts.</p>
     );
   }
 
   // Change this endpoint if your categories route differs.
-  const categoriesResponse = await fetch(
-    "http://localhost:5000/api/v1/categories",
-    {
-      headers,
-      cache: "no-store",
-    },
-  );
+  const categoriesResponse = await fetch(`${baseUrl}/categories`, {
+    headers,
+    cache: "no-store",
+  });
 
   if (categoriesResponse.status === 401) {
     redirect(loginPath);
@@ -136,11 +130,7 @@ export default async function EditPostPage({
 
   return (
     <main className="p-4 md:p-6">
-      <EditPostForm
-        key={post.id}
-        post={post}
-        categories={categoryOptions}
-      />
+      <EditPostForm key={post.id} post={post} categories={categoryOptions} />
     </main>
   );
 }

@@ -21,17 +21,20 @@ export async function refreshAccessToken(): Promise<RefreshResult> {
     };
   }
 
+  const baseUrl = process.env.BASE_API_URL;
+
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
+
   try {
-    const response = await fetch(
-      "http://localhost:5000/api/v1/auth/refresh-token",
-      {
-        method: "POST",
-        headers: {
-          Cookie: `refreshToken=${encodeURIComponent(refreshToken)}`,
-        },
-        cache: "no-store",
+    const response = await fetch(`${baseUrl}/auth/refresh-token`, {
+      method: "POST",
+      headers: {
+        Cookie: `refreshToken=${encodeURIComponent(refreshToken)}`,
       },
-    );
+      cache: "no-store",
+    });
 
     if (response.status === 401 || response.status === 403) {
       // Assumes your backend uses these statuses for a rejected session.

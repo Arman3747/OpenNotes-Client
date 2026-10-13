@@ -38,9 +38,15 @@ export async function resetPassword(
   }
 
   // Set API_BASE_URL in .env.local if your backend uses another URL.
-  const baseUrl = (
-    process.env.API_BASE_URL ?? "http://localhost:5000/api/v1"
-  ).replace(/\/$/, "");
+  // const baseUrl = (
+  //   process.env.BASE_API_URL ?? "http://loscalhost:5000/api/v1"
+  // ).replace(/\/$/, "");
+
+  const baseUrl = process.env.BASE_API_URL;
+
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
 
   try {
     const response = await fetch(`${baseUrl}/auth/reset-password`, {

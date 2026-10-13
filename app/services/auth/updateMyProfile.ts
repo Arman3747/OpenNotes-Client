@@ -145,19 +145,22 @@ export async function updateMyProfile(
 
   let response: Response;
 
+  const baseUrl = process.env.BASE_API_URL;
+
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
+
   try {
-    response = await fetch(
-      `http://localhost:5000/api/v1/user/${encodeURIComponent(user.id)}`,
-      {
-        method: "PATCH",
-        headers: {
-          Accept: "application/json",
-          Cookie: `accessToken=${encodeURIComponent(accessToken)}`,
-        },
-        body: backendFormData,
-        cache: "no-store",
+    response = await fetch(`${baseUrl}/user/${encodeURIComponent(user.id)}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        Cookie: `accessToken=${encodeURIComponent(accessToken)}`,
       },
-    );
+      body: backendFormData,
+      cache: "no-store",
+    });
   } catch {
     return {
       success: false,

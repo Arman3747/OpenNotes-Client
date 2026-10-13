@@ -61,8 +61,14 @@ export const loginUser = async (data: loginInputs) => {
 
   const { email, password } = validatedFields.data;
 
+  const baseUrl = process.env.BASE_API_URL;
+
+  if (!baseUrl) {
+    throw new Error("BASE_API_URL is not configured");
+  }
+
   try {
-    const response = await fetch("http://localhost:5000/api/v1/auth/login", {
+    const response = await fetch(`${baseUrl}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
