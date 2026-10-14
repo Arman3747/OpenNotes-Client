@@ -176,6 +176,8 @@ Required indicates whether a value must be supplied when creating a user. Fields
 | senderId  | Notification[] | No       | Notification records using the named relation `senderId`; a relation list, not a scalar ID |
 | analytics | Analytics[]    | No       | Related analytics records; can be empty                                                    |
 
+---
+
 ### Categories Model
 
 **Fields & Validation:**
@@ -194,6 +196,8 @@ Required indicates whether a value must be supplied when creating a user. Fields
 | Field | Type       | Required | Details                               |
 | ----- | ---------- | -------- | ------------------------------------- |
 | posts | BlogPost[] | No       | Related blog posts; can be empty list |
+
+---
 
 ### BlogPost Model
 
@@ -234,6 +238,8 @@ Required indicates whether a value must be supplied when creating a blog post. F
 | Notifications | Notification[] | No       | Related notifications; can be empty; field capitalization preserved as `Notifications` |
 | analytics     | Analytics[]    | No       | Related analytics records; can be empty                                                |
 | author        | User           | Yes      | Related author; linked through `authorId` referencing `User.id`                        |
+
+---
 
 ### Comment Model
 
